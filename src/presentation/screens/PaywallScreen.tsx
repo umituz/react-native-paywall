@@ -18,7 +18,7 @@ import {
   AtomicButton,
   AtomicIcon,
   AtomicCard,
-} from "@umituz/react-native-design-system";
+} from "@umituz/react-native-design-system-atoms";
 import { useAppDesignTokens } from "@umituz/react-native-design-system-theme";
 import { useLocalization } from "@umituz/react-native-localization";
 import { PaywallPlanCard } from "../components/PaywallPlanCard";

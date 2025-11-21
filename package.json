@@ -29,7 +29,8 @@
     "@umituz/react-native-design-system": "*",
     "@umituz/react-native-design-system-theme": "*",
     "@umituz/react-native-localization": "*",
-    "@umituz/react-native-legal": "*"
+    "@umituz/react-native-legal": "*",
+    "@umituz/react-native-credits": ">=1.0.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.45",

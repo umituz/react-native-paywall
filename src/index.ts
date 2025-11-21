@@ -23,6 +23,16 @@ export { PaywallContent } from "./presentation/components/PaywallContent";
 export { PaywallScreen } from "./presentation/screens/PaywallScreen";
 
 // =============================================================================
+// PRESENTATION LAYER - Hooks
+// =============================================================================
+
+export {
+  useCreditsPaywall,
+  type UseCreditsPaywallParams,
+  type UseCreditsPaywallReturn,
+} from "./presentation/hooks/useCreditsPaywall";
+
+// =============================================================================
 // TYPES
 // =============================================================================
 

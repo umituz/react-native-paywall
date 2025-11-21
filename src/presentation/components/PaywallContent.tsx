@@ -6,7 +6,7 @@
 import React from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
 import type { PurchasesPackage } from "react-native-purchases";
-import { AtomicText, AtomicButton } from "@umituz/react-native-design-system";
+import { AtomicText, AtomicButton } from "@umituz/react-native-design-system-atoms";
 import { useAppDesignTokens } from "@umituz/react-native-design-system-theme";
 import { useLocalization } from "@umituz/react-native-localization";
 import { PaywallPlanCard } from "./PaywallPlanCard";
