@@ -71,11 +71,13 @@ export const CreditsPaywallModal: React.FC<CreditsPaywallModalProps> = ({
   );
 
   const selectedPackage = packages.find((pkg) => pkg.id === selectedPackageId);
-  const displayTitle = title || t("paywall.title") || "Get More Credits";
+  const displayTitle = title || t("paywall.title", "Get More Credits");
   const displaySubtitle =
     subtitle ||
-    t("paywall.subtitle") ||
-    `You need ${requiredCredits} credits. You have ${currentCredits}.`;
+    t(
+      "paywall.subtitle",
+      `You need ${requiredCredits} credits. You have ${currentCredits}.`
+    );
 
   const handlePurchase = async () => {
     if (!selectedPackageId) {
@@ -151,8 +153,8 @@ export const CreditsPaywallModal: React.FC<CreditsPaywallModalProps> = ({
             <AtomicButton
               title={
                 isLoading
-                  ? t("paywall.processing") || "Processing..."
-                  : t("paywall.purchase") || "Purchase"
+                  ? t("paywall.processing", "Processing...")
+                  : t("paywall.purchase", "Purchase")
               }
               onPress={handlePurchase}
               disabled={!selectedPackageId || isLoading}

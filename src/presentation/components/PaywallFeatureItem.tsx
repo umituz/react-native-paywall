@@ -1,12 +1,13 @@
 /**
  * Paywall Feature Item Component
- * Displays a single feature in the features list
+ * Single Responsibility: Display a single feature in the features list
  */
 
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { AtomicText, AtomicIcon } from "@umituz/react-native-design-system-atoms";
 import { useAppDesignTokens } from "@umituz/react-native-design-system-theme";
+import { normalizeIconName } from "./utils/iconMapper";
 
 interface PaywallFeatureItemProps {
   icon: string;
@@ -18,11 +19,12 @@ export const PaywallFeatureItem: React.FC<PaywallFeatureItemProps> = ({
   text,
 }) => {
   const tokens = useAppDesignTokens();
+  const normalizedIcon = normalizeIconName(icon);
 
   return (
     <View style={styles.featureItem}>
       <AtomicIcon
-        name={icon}
+        name={normalizedIcon}
         size={20}
         customColor={tokens.colors.primary}
         style={styles.featureIcon}
