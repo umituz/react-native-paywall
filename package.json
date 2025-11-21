@@ -1,6 +1,6 @@
 {
   "name": "@umituz/react-native-paywall",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Paywall components and screens for React Native apps with subscription management",
   "main": "./src/index.ts",
   "types": "./src/index.ts",

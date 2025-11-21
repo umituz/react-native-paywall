@@ -21,6 +21,14 @@ export const PaywallFeatureItem: React.FC<PaywallFeatureItemProps> = ({
   const tokens = useAppDesignTokens();
   const normalizedIcon = normalizeIconName(icon);
 
+  /* eslint-disable-next-line no-console */
+  if (__DEV__) {
+    /* eslint-disable-next-line no-console */
+    console.log(
+      `[PaywallFeatureItem] Icon normalization: "${icon}" -> "${normalizedIcon}"`
+    );
+  }
+
   return (
     <View style={styles.featureItem}>
       <AtomicIcon
