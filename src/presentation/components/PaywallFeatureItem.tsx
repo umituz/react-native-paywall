@@ -33,12 +33,12 @@ export const PaywallFeatureItem: React.FC<PaywallFeatureItemProps> = ({
     <View style={styles.featureItem}>
       <AtomicIcon
         name={normalizedIcon}
-        size={20}
+        customSize={20}
         customColor={tokens.colors.primary}
         style={styles.featureIcon}
       />
       <AtomicText
-        variant="body"
+        type="bodyMedium"
         style={[styles.featureText, { color: tokens.colors.text }]}
       >
         {text}

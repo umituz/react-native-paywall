@@ -5,6 +5,7 @@
 
 import React from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
+// @ts-expect-error - react-native-purchases is a peer dependency, may not be installed
 import type { PurchasesPackage } from "react-native-purchases";
 import { AtomicText, AtomicButton } from "@umituz/react-native-design-system-atoms";
 import { useAppDesignTokens } from "@umituz/react-native-design-system-theme";
@@ -186,7 +187,7 @@ export const PaywallContent: React.FC<PaywallContentProps> = ({
         >
           {displayTermsText}
         </AtomicText>
-        <AuthLegalLinks variant="centered" />
+        <AuthLegalLinks />
       </View>
     </ScrollView>
   );

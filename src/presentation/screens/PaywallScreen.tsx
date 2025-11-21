@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
+// @ts-expect-error - react-native-purchases is a peer dependency, may not be installed
 import type { PurchasesPackage } from "react-native-purchases";
 import {
   AtomicText,
@@ -122,7 +123,7 @@ export const PaywallScreen: React.FC<PaywallScreenProps> = ({
           >
             <AtomicIcon
               name="X"
-              size={24}
+              customSize={24}
               customColor={tokens.colors.text}
             />
           </TouchableOpacity>
@@ -136,14 +137,14 @@ export const PaywallScreen: React.FC<PaywallScreenProps> = ({
       >
         <View style={styles.titleContainer}>
           <AtomicText
-            variant="h1"
+            type="titleLarge"
             style={[styles.mainTitle, { color: tokens.colors.text }]}
           >
             {displayTitle}
           </AtomicText>
 
           <AtomicText
-            variant="body"
+            type="bodyMedium"
             style={[styles.subtitle, { color: tokens.colors.textSecondary }]}
           >
             {displaySubtitle}
@@ -224,7 +225,7 @@ export const PaywallScreen: React.FC<PaywallScreenProps> = ({
         {/* Guest sign in message */}
         {isGuest && (
           <AtomicText
-            variant="bodySmall"
+            type="bodySmall"
             style={[
               styles.guestMessage,
               { color: tokens.colors.textSecondary },
@@ -237,12 +238,12 @@ export const PaywallScreen: React.FC<PaywallScreenProps> = ({
         {/* Terms */}
         <View style={styles.termsContainer}>
           <AtomicText
-            variant="caption"
+            type="labelSmall"
             style={[styles.termsText, { color: tokens.colors.textSecondary }]}
           >
             {displayTermsText}
           </AtomicText>
-          <AuthLegalLinks variant="centered" />
+          <AuthLegalLinks />
         </View>
       </ScrollView>
     </View>

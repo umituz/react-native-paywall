@@ -5,6 +5,7 @@
 
 import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
+// @ts-expect-error - react-native-purchases is a peer dependency, may not be installed
 import type { PurchasesPackage } from "react-native-purchases";
 import { AtomicText, AtomicCard } from "@umituz/react-native-design-system-atoms";
 import { useAppDesignTokens } from "@umituz/react-native-design-system-theme";
@@ -119,7 +120,7 @@ export const PaywallPlanCard: React.FC<PaywallPlanCardProps> = ({
 
             <View style={styles.planRight}>
               <AtomicText
-                variant="h3"
+                type="titleMedium"
                 style={[styles.planPrice, { color: tokens.colors.text }]}
               >
                 {isYearly && yearlyMonthlyEquivalent
@@ -173,7 +174,7 @@ export const PaywallPlanCard: React.FC<PaywallPlanCardProps> = ({
               { backgroundColor: tokens.colors.primary },
             ]}
           >
-            <AtomicText variant="caption" style={styles.bestValueText}>
+            <AtomicText type="labelSmall" style={styles.bestValueText}>
               {t("subscription.plans.bestValue")}
             </AtomicText>
           </View>
@@ -202,7 +203,7 @@ export const PaywallPlanCard: React.FC<PaywallPlanCardProps> = ({
             </View>
             <View style={styles.planTextContainer}>
               <AtomicText
-                variant="h3"
+                type="titleMedium"
                 style={[styles.planTitle, { color: tokens.colors.text }]}
               >
                 {isYearly
@@ -211,7 +212,7 @@ export const PaywallPlanCard: React.FC<PaywallPlanCardProps> = ({
               </AtomicText>
               {isYearly && (
                 <AtomicText
-                  variant="body"
+                  type="bodyMedium"
                   style={[
                     styles.planPeriod,
                     { color: tokens.colors.textSecondary },
@@ -225,7 +226,7 @@ export const PaywallPlanCard: React.FC<PaywallPlanCardProps> = ({
 
           <View style={styles.planRight}>
             <AtomicText
-              variant="h3"
+              type="titleMedium"
               style={[styles.planPrice, { color: tokens.colors.text }]}
             >
               {isYearly && yearlyMonthlyEquivalent
