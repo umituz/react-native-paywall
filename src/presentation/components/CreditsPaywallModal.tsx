@@ -71,12 +71,27 @@ export const CreditsPaywallModal: React.FC<CreditsPaywallModalProps> =
         [subtitle, requiredCredits, currentCredits, t],
       );
 
+      const featuresTitle = useMemo(
+        () => t("paywall.features", "Premium Features"),
+        [t],
+      );
+
+      const packagesTitle = useMemo(
+        () => t("paywall.packages", "Choose a Package"),
+        [t],
+      );
+
       const handlePurchase = useCallback(async () => {
-        if (!selectedPackageId) {
+        if (!selectedPackageId || isLoading) {
           return;
         }
-        await onPurchase(selectedPackageId);
-      }, [selectedPackageId, onPurchase]);
+        try {
+          await onPurchase(selectedPackageId);
+        } catch (error) {
+          // Error is handled by parent component
+          // Don't close modal on error
+        }
+      }, [selectedPackageId, isLoading, onPurchase]);
 
       const handleSelectPackage = useCallback(
         (packageId: string) => {
@@ -157,7 +172,7 @@ export const CreditsPaywallModal: React.FC<CreditsPaywallModalProps> =
                       { color: tokens.colors.textPrimary },
                     ]}
                   >
-                    {t("paywall.features", "Premium Features")}
+                    {featuresTitle}
                   </AtomicText>
                   <PaywallFeaturesList
                     features={features}
@@ -175,7 +190,7 @@ export const CreditsPaywallModal: React.FC<CreditsPaywallModalProps> =
                       { color: tokens.colors.textPrimary },
                     ]}
                   >
-                    {t("paywall.packages", "Choose a Package")}
+                    {packagesTitle}
                   </AtomicText>
                   <View style={styles.packagesContainer}>
                     {packages.map((pkg) => (

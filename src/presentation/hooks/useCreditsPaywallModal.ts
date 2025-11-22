@@ -90,9 +90,16 @@ export function useCreditsPaywallModal(
 
   const handlePurchase = useCallback(
     async (packageId: string) => {
-      await onPurchase(packageId);
-      await loadCredits();
-      hidePaywall();
+      try {
+        await onPurchase(packageId);
+        await loadCredits();
+        // Only hide paywall on success
+        hidePaywall();
+      } catch (error) {
+        // Don't hide paywall on error - let user retry
+        // Error is logged/handled by parent component
+        throw error;
+      }
     },
     [onPurchase, loadCredits, hidePaywall],
   );
