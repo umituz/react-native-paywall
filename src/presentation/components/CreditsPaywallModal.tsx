@@ -143,21 +143,51 @@ export const CreditsPaywallModal: React.FC<CreditsPaywallModalProps> =
                   {displaySubtitle}
                 </AtomicText>
 
-                <View style={styles.packagesContainer}>
-                  {packages.map((pkg) => (
-                    <CreditsPackageCard
-                      key={pkg.id}
-                      package={pkg}
-                      isSelected={selectedPackageId === pkg.id}
-                      onSelect={() => handleSelectPackage(pkg.id)}
-                    />
-                  ))}
+                {/* Features Section - Top */}
+                <View
+                  style={[
+                    styles.featuresSection,
+                    { backgroundColor: tokens.colors.backgroundSecondary },
+                  ]}
+                >
+                  <AtomicText
+                    type="titleMedium"
+                    style={[
+                      styles.sectionTitle,
+                      { color: tokens.colors.textPrimary },
+                    ]}
+                  >
+                    {t("paywall.features", "Premium Features")}
+                  </AtomicText>
+                  <PaywallFeaturesList
+                    features={features}
+                    containerStyle={styles.featuresContainer}
+                    gap={16}
+                  />
                 </View>
 
-                <PaywallFeaturesList
-                  features={features}
-                  containerStyle={styles.featuresContainer}
-                />
+                {/* Packages Section - Bottom */}
+                <View style={styles.packagesSection}>
+                  <AtomicText
+                    type="titleMedium"
+                    style={[
+                      styles.sectionTitle,
+                      { color: tokens.colors.textPrimary },
+                    ]}
+                  >
+                    {t("paywall.packages", "Choose a Package")}
+                  </AtomicText>
+                  <View style={styles.packagesContainer}>
+                    {packages.map((pkg) => (
+                      <CreditsPackageCard
+                        key={pkg.id}
+                        package={pkg}
+                        isSelected={selectedPackageId === pkg.id}
+                        onSelect={() => handleSelectPackage(pkg.id)}
+                      />
+                    ))}
+                  </View>
+                </View>
               </ScrollView>
 
               <SafeAreaView edges={["bottom"]} style={styles.footer}>
@@ -229,11 +259,23 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 24,
   },
-  packagesContainer: {
+  featuresSection: {
+    borderRadius: 16,
+    padding: 20,
     marginBottom: 24,
   },
+  packagesSection: {
+    marginBottom: 8,
+  },
+  sectionTitle: {
+    fontWeight: "700",
+    marginBottom: 16,
+  },
   featuresContainer: {
-    marginBottom: 24,
+    marginBottom: 0,
+  },
+  packagesContainer: {
+    gap: 12,
   },
   footer: {
     padding: 24,

@@ -19,13 +19,14 @@ interface PaywallFeaturesListProps {
 export const PaywallFeaturesList: React.FC<PaywallFeaturesListProps> = React.memo(
   ({ features, containerStyle, gap = 12 }) => {
     return (
-      <View style={[styles.container, containerStyle, { gap }]}>
+      <View style={[styles.container, containerStyle]}>
         {features.map((feature, index) => (
-          <PaywallFeatureItem
+          <View
             key={`${feature.icon}-${feature.text}-${index}`}
-            icon={feature.icon}
-            text={feature.text}
-          />
+            style={{ marginBottom: index < features.length - 1 ? gap : 0 }}
+          >
+            <PaywallFeatureItem icon={feature.icon} text={feature.text} />
+          </View>
         ))}
       </View>
     );

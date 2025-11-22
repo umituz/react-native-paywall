@@ -54,13 +54,13 @@ const styles = StyleSheet.create({
   featureItem: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 10,
   },
   featureIcon: {
     marginRight: 12,
   },
   featureText: {
-    fontSize: 14,
+    fontSize: 15,
     flex: 1,
+    lineHeight: 22,
   },
 });
