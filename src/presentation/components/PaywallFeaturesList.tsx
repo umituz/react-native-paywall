@@ -16,23 +16,23 @@ interface PaywallFeaturesListProps {
   gap?: number;
 }
 
-export const PaywallFeaturesList: React.FC<PaywallFeaturesListProps> = ({
-  features,
-  containerStyle,
-  gap = 12,
-}) => {
-  return (
-    <View style={[styles.container, containerStyle, { gap }]}>
-      {features.map((feature, index) => (
-        <PaywallFeatureItem
-          key={index}
-          icon={feature.icon}
-          text={feature.text}
-        />
-      ))}
-    </View>
-  );
-};
+export const PaywallFeaturesList: React.FC<PaywallFeaturesListProps> = React.memo(
+  ({ features, containerStyle, gap = 12 }) => {
+    return (
+      <View style={[styles.container, containerStyle, { gap }]}>
+        {features.map((feature, index) => (
+          <PaywallFeatureItem
+            key={`${feature.icon}-${feature.text}-${index}`}
+            icon={feature.icon}
+            text={feature.text}
+          />
+        ))}
+      </View>
+    );
+  },
+);
+
+PaywallFeaturesList.displayName = "PaywallFeaturesList";
 
 const styles = StyleSheet.create({
   container: {

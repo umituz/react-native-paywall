@@ -3,17 +3,20 @@
  * Single Responsibility: Display credits purchase modal
  */
 
-import React, { useState } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import {
   View,
   Modal,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { AtomicText, AtomicButton, AtomicIcon } from "@umituz/react-native-design-system-atoms";
+import {
+  AtomicText,
+  AtomicButton,
+  AtomicIcon,
+} from "@umituz/react-native-design-system-atoms";
 import { useAppDesignTokens } from "@umituz/react-native-design-system-theme";
 import { useLocalization } from "@umituz/react-native-localization";
 import { CreditsPackageCard } from "./CreditsPackageCard";
@@ -21,151 +24,162 @@ import { PaywallFeaturesList } from "./PaywallFeaturesList";
 import type { CreditsPackage } from "../../domain/entities/CreditsPackage";
 
 interface CreditsPaywallModalProps {
-  /** Whether modal is visible */
   visible: boolean;
-
-  /** Available credit packages */
   packages: CreditsPackage[];
-
-  /** Current credit balance */
   currentCredits: number;
-
-  /** Required credits to access feature */
   requiredCredits: number;
-
-  /** Features list */
   features: Array<{ icon: string; text: string }>;
-
-  /** Callback when modal is closed */
   onClose: () => void;
-
-  /** Callback when package is purchased */
   onPurchase: (packageId: string) => Promise<void>;
-
-  /** Whether purchase is loading */
   isLoading?: boolean;
-
-  /** Title text */
   title?: string;
-
-  /** Subtitle text */
   subtitle?: string;
 }
 
-export const CreditsPaywallModal: React.FC<CreditsPaywallModalProps> = ({
-  visible,
-  packages,
-  currentCredits,
-  requiredCredits,
-  features,
-  onClose,
-  onPurchase,
-  isLoading = false,
-  title,
-  subtitle,
-}) => {
-  const tokens = useAppDesignTokens();
-  const { t } = useLocalization();
-  const [selectedPackageId, setSelectedPackageId] = useState<string | null>(
-    null,
-  );
+export const CreditsPaywallModal: React.FC<CreditsPaywallModalProps> =
+  React.memo(
+    ({
+      visible,
+      packages,
+      currentCredits,
+      requiredCredits,
+      features,
+      onClose,
+      onPurchase,
+      isLoading = false,
+      title,
+      subtitle,
+    }) => {
+      const tokens = useAppDesignTokens();
+      const { t } = useLocalization();
+      const [selectedPackageId, setSelectedPackageId] = useState<string | null>(
+        null,
+      );
 
-  const selectedPackage = packages.find((pkg) => pkg.id === selectedPackageId);
-  const displayTitle = title || t("paywall.title", "Get More Credits");
-  const displaySubtitle =
-    subtitle ||
-    t(
-      "paywall.subtitle",
-      `You need ${requiredCredits} credits. You have ${currentCredits}.`
-    );
+      const displayTitle = useMemo(
+        () => title || t("paywall.title", "Get More Credits"),
+        [title, t],
+      );
 
-  const handlePurchase = async () => {
-    if (!selectedPackageId) {
-      return;
-    }
-    await onPurchase(selectedPackageId);
-  };
+      const displaySubtitle = useMemo(
+        () =>
+          subtitle ||
+          t(
+            "paywall.subtitle",
+            `You need ${requiredCredits} credits. You have ${currentCredits}.`,
+          ),
+        [subtitle, requiredCredits, currentCredits, t],
+      );
 
-  if (!visible) {
-    return null;
-  }
+      const handlePurchase = useCallback(async () => {
+        if (!selectedPackageId) {
+          return;
+        }
+        await onPurchase(selectedPackageId);
+      }, [selectedPackageId, onPurchase]);
 
-  return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="slide"
-      onRequestClose={onClose}
-    >
-      <View style={styles.overlay}>
-        <TouchableOpacity
-          style={styles.backdrop}
-          activeOpacity={1}
-          onPress={onClose}
-        />
-        <View
-          style={[styles.content, { backgroundColor: tokens.colors.surface }]}
+      const handleSelectPackage = useCallback(
+        (packageId: string) => {
+          setSelectedPackageId(packageId);
+        },
+        [],
+      );
+
+      if (!visible) {
+        return null;
+      }
+
+      return (
+        <Modal
+          visible={visible}
+          transparent
+          animationType="slide"
+          onRequestClose={onClose}
         >
-          <SafeAreaView edges={["top"]} style={styles.safeAreaTop}>
-            <View style={styles.header}>
-              <AtomicText
-                type="headlineLarge"
-                style={[styles.title, { color: tokens.colors.textPrimary }]}
-              >
-                {displayTitle}
-              </AtomicText>
-              <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-                <AtomicIcon name="X" size="md" color="secondary" />
-              </TouchableOpacity>
-            </View>
-          </SafeAreaView>
-
-          <ScrollView
-            style={styles.scrollView}
-            contentContainerStyle={styles.scrollContent}
-            showsVerticalScrollIndicator={false}
-          >
-            <AtomicText
-              type="bodyMedium"
-              style={[styles.subtitle, { color: tokens.colors.textSecondary }]}
+          <View style={styles.overlay}>
+            <TouchableOpacity
+              style={styles.backdrop}
+              activeOpacity={1}
+              onPress={onClose}
+            />
+            <View
+              style={[
+                styles.content,
+                { backgroundColor: tokens.colors.surface },
+              ]}
             >
-              {displaySubtitle}
-            </AtomicText>
+              <SafeAreaView edges={["top"]} style={styles.safeAreaTop}>
+                <View style={styles.header}>
+                  <AtomicText
+                    type="headlineLarge"
+                    style={[styles.title, { color: tokens.colors.textPrimary }]}
+                  >
+                    {displayTitle}
+                  </AtomicText>
+                  <TouchableOpacity
+                    onPress={onClose}
+                    style={[
+                      styles.closeButton,
+                      { backgroundColor: tokens.colors.borderLight },
+                    ]}
+                  >
+                    <AtomicIcon name="X" size="md" color="secondary" />
+                  </TouchableOpacity>
+                </View>
+              </SafeAreaView>
 
-            <View style={styles.packagesContainer}>
-              {packages.map((pkg) => (
-                <CreditsPackageCard
-                  key={pkg.id}
-                  package={pkg}
-                  isSelected={selectedPackageId === pkg.id}
-                  onSelect={() => setSelectedPackageId(pkg.id)}
+              <ScrollView
+                style={styles.scrollView}
+                contentContainerStyle={styles.scrollContent}
+                showsVerticalScrollIndicator={false}
+              >
+                <AtomicText
+                  type="bodyMedium"
+                  style={[
+                    styles.subtitle,
+                    { color: tokens.colors.textSecondary },
+                  ]}
+                >
+                  {displaySubtitle}
+                </AtomicText>
+
+                <View style={styles.packagesContainer}>
+                  {packages.map((pkg) => (
+                    <CreditsPackageCard
+                      key={pkg.id}
+                      package={pkg}
+                      isSelected={selectedPackageId === pkg.id}
+                      onSelect={() => handleSelectPackage(pkg.id)}
+                    />
+                  ))}
+                </View>
+
+                <PaywallFeaturesList
+                  features={features}
+                  containerStyle={styles.featuresContainer}
                 />
-              ))}
+              </ScrollView>
+
+              <SafeAreaView edges={["bottom"]} style={styles.footer}>
+                <AtomicButton
+                  title={
+                    isLoading
+                      ? t("paywall.processing", "Processing...")
+                      : t("paywall.purchase", "Purchase")
+                  }
+                  onPress={handlePurchase}
+                  disabled={!selectedPackageId || isLoading}
+                  style={styles.purchaseButton}
+                />
+              </SafeAreaView>
             </View>
-
-            <PaywallFeaturesList
-              features={features}
-              containerStyle={styles.featuresContainer}
-            />
-          </ScrollView>
-
-          <View style={styles.footer}>
-            <AtomicButton
-              title={
-                isLoading
-                  ? t("paywall.processing", "Processing...")
-                  : t("paywall.purchase", "Purchase")
-              }
-              onPress={handlePurchase}
-              disabled={!selectedPackageId || isLoading}
-              style={styles.purchaseButton}
-            />
           </View>
-        </View>
-      </View>
-    </Modal>
+        </Modal>
+      );
+    },
   );
-};
+
+CreditsPaywallModal.displayName = "CreditsPaywallModal";
 
 const styles = StyleSheet.create({
   overlay: {
@@ -201,7 +215,6 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: "rgba(0, 0, 0, 0.05)",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -210,29 +223,23 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 24,
-    paddingBottom: 100,
+    paddingBottom: 24,
   },
   subtitle: {
     textAlign: "center",
-    marginBottom: 20,
+    marginBottom: 24,
   },
   packagesContainer: {
-    marginBottom: 20,
+    marginBottom: 24,
   },
   featuresContainer: {
-    marginBottom: 20,
+    marginBottom: 24,
   },
   footer: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
     padding: 24,
-    paddingBottom: 32,
-    backgroundColor: "transparent",
+    paddingTop: 16,
   },
   purchaseButton: {
     marginBottom: 0,
   },
 });
-

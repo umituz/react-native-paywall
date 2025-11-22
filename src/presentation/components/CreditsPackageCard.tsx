@@ -10,102 +10,95 @@ import { useAppDesignTokens } from "@umituz/react-native-design-system-theme";
 import type { CreditsPackage } from "../../domain/entities/CreditsPackage";
 
 interface CreditsPackageCardProps {
-  /** Package data */
   package: CreditsPackage;
-
-  /** Whether this package is selected */
   isSelected: boolean;
-
-  /** Callback when package is selected */
   onSelect: () => void;
 }
 
-export const CreditsPackageCard: React.FC<CreditsPackageCardProps> = ({
-  package: pkg,
-  isSelected,
-  onSelect,
-}) => {
-  const tokens = useAppDesignTokens();
+export const CreditsPackageCard: React.FC<CreditsPackageCardProps> =
+  React.memo(({ package: pkg, isSelected, onSelect }) => {
+    const tokens = useAppDesignTokens();
 
-  const totalCredits = pkg.credits + (pkg.bonus || 0);
+    const totalCredits = pkg.credits + (pkg.bonus || 0);
 
-  return (
-    <TouchableOpacity
-      style={[
-        styles.container,
-        isSelected && styles.selectedContainer,
-        {
-          backgroundColor: isSelected
-            ? tokens.colors.primary + "15"
-            : tokens.colors.surface,
-          borderColor: isSelected
-            ? tokens.colors.primary
-            : tokens.colors.border,
-        },
-      ]}
-      onPress={onSelect}
-      activeOpacity={0.8}
-    >
-      {pkg.badge && (
-        <View
-          style={[styles.badge, { backgroundColor: tokens.colors.warning }]}
-        >
-          <AtomicText
-            type="labelSmall"
-            style={{ color: "#FFFFFF", fontWeight: "700" }}
+    return (
+      <TouchableOpacity
+        style={[
+          styles.container,
+          {
+            backgroundColor: isSelected
+              ? tokens.colors.primary + "15"
+              : tokens.colors.surface,
+            borderColor: isSelected
+              ? tokens.colors.primary
+              : tokens.colors.border,
+            borderWidth: isSelected ? 2 : 1,
+          },
+        ]}
+        onPress={onSelect}
+        activeOpacity={0.8}
+      >
+        {pkg.badge && (
+          <View
+            style={[
+              styles.badge,
+              { backgroundColor: tokens.colors.warning || tokens.colors.accent },
+            ]}
           >
-            {pkg.badge}
-          </AtomicText>
-        </View>
-      )}
-      <View style={styles.content}>
-        <View style={styles.leftSection}>
-          <AtomicText
-            type="headlineMedium"
-            style={[styles.credits, { color: tokens.colors.textPrimary }]}
-          >
-            {totalCredits.toLocaleString()} Credits
-          </AtomicText>
-          {pkg.bonus && pkg.bonus > 0 && (
             <AtomicText
-              type="bodySmall"
-              style={[styles.bonus, { color: tokens.colors.success }]}
+              type="labelSmall"
+              style={{ color: "#FFFFFF", fontWeight: "700" }}
             >
-              +{pkg.bonus} bonus
+              {pkg.badge}
             </AtomicText>
-          )}
-          {pkg.description && (
+          </View>
+        )}
+        <View style={styles.content}>
+          <View style={styles.leftSection}>
             <AtomicText
-              type="bodySmall"
-              style={[styles.description, { color: tokens.colors.textSecondary }]}
+              type="headlineMedium"
+              style={[styles.credits, { color: tokens.colors.textPrimary }]}
             >
-              {pkg.description}
+              {totalCredits.toLocaleString()} Credits
             </AtomicText>
-          )}
+            {pkg.bonus && pkg.bonus > 0 && (
+              <AtomicText
+                type="bodySmall"
+                style={[styles.bonus, { color: tokens.colors.success }]}
+              >
+                +{pkg.bonus} bonus
+              </AtomicText>
+            )}
+            {pkg.description && (
+              <AtomicText
+                type="bodySmall"
+                style={[styles.description, { color: tokens.colors.textSecondary }]}
+              >
+                {pkg.description}
+              </AtomicText>
+            )}
+          </View>
+          <View style={styles.rightSection}>
+            <AtomicText
+              type="titleLarge"
+              style={[styles.price, { color: tokens.colors.primary }]}
+            >
+              {pkg.currency} {pkg.price.toFixed(2)}
+            </AtomicText>
+          </View>
         </View>
-        <View style={styles.rightSection}>
-          <AtomicText
-            type="titleLarge"
-            style={[styles.price, { color: tokens.colors.primary }]}
-          >
-            {pkg.currency} {pkg.price.toFixed(2)}
-          </AtomicText>
-        </View>
-      </View>
-    </TouchableOpacity>
-  );
-};
+      </TouchableOpacity>
+    );
+  });
+
+CreditsPackageCard.displayName = "CreditsPackageCard";
 
 const styles = StyleSheet.create({
   container: {
     borderRadius: 16,
-    borderWidth: 2,
     padding: 20,
     marginBottom: 12,
     position: "relative",
-  },
-  selectedContainer: {
-    borderWidth: 2,
   },
   badge: {
     position: "absolute",
@@ -141,4 +134,3 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
 });
-
