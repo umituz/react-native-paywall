@@ -53,6 +53,4 @@ export {
 // Note: PurchasesPackage type is from react-native-purchases peer dependency
 // We export it here for convenience, but the package must be installed
 // TypeScript will resolve it from node_modules when react-native-purchases is installed
-// @ts-expect-error - react-native-purchases is a peer dependency, may not be installed
 export type { PurchasesPackage } from "react-native-purchases";
-

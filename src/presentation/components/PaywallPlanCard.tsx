@@ -5,7 +5,6 @@
 
 import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
-// @ts-expect-error - react-native-purchases is a peer dependency, may not be installed
 import type { PurchasesPackage } from "react-native-purchases";
 import { AtomicText, AtomicCard } from "@umituz/react-native-design-system-atoms";
 import { useAppDesignTokens } from "@umituz/react-native-design-system-theme";
@@ -311,4 +310,3 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
 });
-

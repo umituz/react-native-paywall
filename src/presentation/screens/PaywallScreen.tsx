@@ -12,7 +12,6 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
-// @ts-expect-error - react-native-purchases is a peer dependency, may not be installed
 import type { PurchasesPackage } from "react-native-purchases";
 import {
   AtomicText,
@@ -319,4 +318,3 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
 });
-
