@@ -1,27 +1,20 @@
 /**
  * useCreditsPaywall Hook
- * Single Responsibility: Handle credits-based paywall logic
- * Integrates credits package with paywall
+ * Simple hook for credits-based paywall logic
+ * Uses new constant-based credits system
  */
 
 import { useMemo } from "react";
-import type { ICreditsRepository } from "@umituz/react-native-credits";
 import { useCredits } from "@umituz/react-native-credits";
 
 export interface UseCreditsPaywallParams {
-  /** User ID */
-  userId: string | null;
-
-  /** Credits repository */
-  creditsRepository: ICreditsRepository;
-
   /** Required credits to access feature */
   requiredCredits: number;
 }
 
 export interface UseCreditsPaywallReturn {
   /** Current credit balance */
-  credits: number | null;
+  credits: number;
 
   /** Loading state */
   loading: boolean;
@@ -30,10 +23,10 @@ export interface UseCreditsPaywallReturn {
   hasEnoughCredits: boolean;
 
   /** Remaining credits after purchase */
-  remainingAfterPurchase: number | null;
+  remainingAfterPurchase: number;
 
-  /** Load credits */
-  loadCredits: () => Promise<void>;
+  /** Use credits for a feature */
+  useCredits: (cost: number, feature: string) => boolean;
 }
 
 /**
@@ -41,23 +34,22 @@ export interface UseCreditsPaywallReturn {
  * Shows paywall when user doesn't have enough credits
  */
 export function useCreditsPaywall(
-  params: UseCreditsPaywallParams,
+  params: UseCreditsPaywallParams
 ): UseCreditsPaywallReturn {
-  const { userId, creditsRepository, requiredCredits } = params;
+  const { requiredCredits } = params;
 
-  const { credits, loading, loadCredits } = useCredits({
-    userId,
-    repository: creditsRepository,
-  });
+  const {
+    credits,
+    loading,
+    canAfford,
+    useCredits: useCreditsForFeature,
+  } = useCredits();
 
   const hasEnoughCredits = useMemo(() => {
-    return credits !== null && credits >= requiredCredits;
-  }, [credits, requiredCredits]);
+    return canAfford(requiredCredits);
+  }, [canAfford, requiredCredits]);
 
   const remainingAfterPurchase = useMemo(() => {
-    if (credits === null) {
-      return null;
-    }
     return Math.max(0, credits - requiredCredits);
   }, [credits, requiredCredits]);
 
@@ -66,7 +58,6 @@ export function useCreditsPaywall(
     loading,
     hasEnoughCredits,
     remainingAfterPurchase,
-    loadCredits,
+    useCredits: useCreditsForFeature,
   };
 }
-

@@ -1,10 +1,7 @@
 /**
  * @umituz/react-native-paywall - Public API
  *
- * Paywall components and screens for React Native apps with subscription management
- *
- * Usage:
- *   import { PaywallScreen, PaywallContent, PaywallPlanCard, PaywallFeatureItem, PaywallFeaturesList } from '@umituz/react-native-paywall';
+ * Paywall components for React Native apps with credits and subscription support
  */
 
 // =============================================================================
@@ -12,17 +9,23 @@
 // =============================================================================
 
 export type { CreditsPackage } from "./domain/entities/CreditsPackage";
+export type { SubscriptionPlan } from "./domain/entities/SubscriptionPlan";
+export type { PaywallTabType, PaywallTab } from "./domain/entities/PaywallTab";
 
 // =============================================================================
 // PRESENTATION LAYER - Components
 // =============================================================================
 
-export { PaywallPlanCard } from "./presentation/components/PaywallPlanCard";
+export { PaywallModal } from "./presentation/components/PaywallModal";
+export { PaywallHeader } from "./presentation/components/PaywallHeader";
+export { PaywallTabBar } from "./presentation/components/PaywallTabBar";
+export { CreditsTabContent } from "./presentation/components/CreditsTabContent";
+export { SubscriptionTabContent } from "./presentation/components/SubscriptionTabContent";
+export { CreditsPackageCard } from "./presentation/components/CreditsPackageCard";
+export { SubscriptionPlanCard } from "./presentation/components/SubscriptionPlanCard";
 export { PaywallFeatureItem } from "./presentation/components/PaywallFeatureItem";
 export { PaywallFeaturesList } from "./presentation/components/PaywallFeaturesList";
-export { PaywallContent } from "./presentation/components/PaywallContent";
-export { CreditsPackageCard } from "./presentation/components/CreditsPackageCard";
-export { CreditsPaywallModal } from "./presentation/components/CreditsPaywallModal";
+export { PaywallLegalFooter } from "./presentation/components/PaywallLegalFooter";
 
 // =============================================================================
 // PRESENTATION LAYER - Screens
@@ -47,10 +50,7 @@ export {
 } from "./presentation/hooks/useCreditsPaywallModal";
 
 // =============================================================================
-// TYPES
+// TYPES (from peer dependencies)
 // =============================================================================
 
-// Note: PurchasesPackage type is from react-native-purchases peer dependency
-// We export it here for convenience, but the package must be installed
-// TypeScript will resolve it from node_modules when react-native-purchases is installed
 export type { PurchasesPackage } from "react-native-purchases";

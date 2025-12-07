@@ -1,26 +1,19 @@
 /**
  * useCreditsPaywallModal Hook
- * Single Responsibility: Handle credits paywall modal state and operations
- * Integrates credits package with paywall modal
+ * Handle credits paywall modal state and operations
+ * Uses new constant-based credits system
  */
 
 import { useState, useCallback, useMemo } from "react";
-import type { ICreditsRepository } from "@umituz/react-native-credits";
 import { useCredits } from "@umituz/react-native-credits";
 import type { CreditsPackage } from "../../domain/entities/CreditsPackage";
 
 export interface UseCreditsPaywallModalParams {
-  /** User ID */
-  userId: string | null;
-
-  /** Credits repository */
-  creditsRepository: ICreditsRepository;
-
   /** Available credit packages */
   packages: CreditsPackage[];
 
-  /** Purchase callback */
-  onPurchase: (packageId: string) => Promise<void>;
+  /** Purchase callback - receives package, should add credits on success */
+  onPurchase: (pkg: CreditsPackage) => Promise<void>;
 }
 
 export interface UseCreditsPaywallModalReturn {
@@ -28,7 +21,7 @@ export interface UseCreditsPaywallModalReturn {
   visible: boolean;
 
   /** Current credit balance */
-  credits: number | null;
+  credits: number;
 
   /** Loading state */
   loading: boolean;
@@ -54,34 +47,30 @@ export interface UseCreditsPaywallModalReturn {
  * Shows paywall when user doesn't have enough credits
  */
 export function useCreditsPaywallModal(
-  params: UseCreditsPaywallModalParams,
+  params: UseCreditsPaywallModalParams
 ): UseCreditsPaywallModalReturn {
-  const { userId, creditsRepository, packages, onPurchase } = params;
+  const { packages, onPurchase } = params;
 
   const [visible, setVisible] = useState(false);
   const [requiredCredits, setRequiredCredits] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const { credits, loading, loadCredits } = useCredits({
-    userId,
-    repository: creditsRepository,
-  });
+  const { credits, loading, canAfford } = useCredits();
 
   const hasEnoughCredits = useMemo(() => {
-    return credits !== null && credits >= requiredCredits;
-  }, [credits, requiredCredits]);
+    return canAfford(requiredCredits);
+  }, [canAfford, requiredCredits]);
 
   const showPaywall = useCallback(
     (required: number) => {
-      // Only show paywall if credits are insufficient
-      const currentCredits = credits ?? 0;
-      if (currentCredits >= required) {
+      if (canAfford(required)) {
         return;
       }
 
       setRequiredCredits(required);
       setVisible(true);
     },
-    [credits],
+    [canAfford]
   );
 
   const hidePaywall = useCallback(() => {
@@ -90,24 +79,26 @@ export function useCreditsPaywallModal(
 
   const handlePurchase = useCallback(
     async (packageId: string) => {
+      const pkg = packages.find((p) => p.id === packageId);
+      if (!pkg) {
+        throw new Error(`Package not found: ${packageId}`);
+      }
+
+      setIsLoading(true);
       try {
-        await onPurchase(packageId);
-        await loadCredits();
-        // Only hide paywall on success
+        await onPurchase(pkg);
         hidePaywall();
-      } catch (error) {
-        // Don't hide paywall on error - let user retry
-        // Error is logged/handled by parent component
-        throw error;
+      } finally {
+        setIsLoading(false);
       }
     },
-    [onPurchase, loadCredits, hidePaywall],
+    [packages, onPurchase, hidePaywall]
   );
 
   return {
     visible,
     credits,
-    loading,
+    loading: loading || isLoading,
     requiredCredits,
     showPaywall,
     hidePaywall,
@@ -115,4 +106,3 @@ export function useCreditsPaywallModal(
     hasEnoughCredits,
   };
 }
-

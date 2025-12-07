@@ -27,7 +27,7 @@ export const CreditsPackageCard: React.FC<CreditsPackageCardProps> =
           styles.container,
           {
             backgroundColor: isSelected
-              ? tokens.colors.primary + "15"
+              ? tokens.colors.primaryLight
               : tokens.colors.surface,
             borderColor: isSelected
               ? tokens.colors.primary
@@ -40,14 +40,11 @@ export const CreditsPackageCard: React.FC<CreditsPackageCardProps> =
       >
         {pkg.badge && (
           <View
-            style={[
-              styles.badge,
-              { backgroundColor: tokens.colors.warning || tokens.colors.accent },
-            ]}
+            style={[styles.badge, { backgroundColor: tokens.colors.warning }]}
           >
             <AtomicText
               type="labelSmall"
-              style={{ color: "#FFFFFF", fontWeight: "700" }}
+              style={{ color: tokens.colors.onPrimary, fontWeight: "700" }}
             >
               {pkg.badge}
             </AtomicText>
@@ -72,7 +69,7 @@ export const CreditsPackageCard: React.FC<CreditsPackageCardProps> =
             {pkg.description && (
               <AtomicText
                 type="bodySmall"
-                style={[styles.description, { color: tokens.colors.textSecondary }]}
+                style={{ color: tokens.colors.textSecondary }}
               >
                 {pkg.description}
               </AtomicText>
@@ -98,14 +95,6 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 20,
     position: "relative",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
   },
   badge: {
     position: "absolute",
@@ -130,9 +119,6 @@ const styles = StyleSheet.create({
   bonus: {
     fontWeight: "600",
     marginBottom: 4,
-  },
-  description: {
-    fontWeight: "400",
   },
   rightSection: {
     alignItems: "flex-end",
