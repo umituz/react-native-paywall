@@ -3,7 +3,7 @@
  * Single Responsibility: Display subscription plans list
  */
 
-import React from "react";
+import React, { useMemo } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
 import { AtomicButton } from "@umituz/react-native-design-system-atoms";
 import { useAppDesignTokens } from "@umituz/react-native-design-system-theme";
@@ -22,6 +22,21 @@ interface SubscriptionTabContentProps {
   purchaseButtonText?: string;
 }
 
+const isYearlyPackage = (pkg: PurchasesPackage): boolean => {
+  const period = pkg.product.subscriptionPeriod;
+  return period?.includes("Y") || period?.includes("year") || false;
+};
+
+const sortPackages = (packages: PurchasesPackage[]): PurchasesPackage[] => {
+  return [...packages].sort((a, b) => {
+    const aIsYearly = isYearlyPackage(a);
+    const bIsYearly = isYearlyPackage(b);
+    if (aIsYearly && !bIsYearly) return -1;
+    if (!aIsYearly && bIsYearly) return 1;
+    return b.product.price - a.product.price;
+  });
+};
+
 export const SubscriptionTabContent: React.FC<SubscriptionTabContentProps> =
   React.memo(
     ({
@@ -35,11 +50,11 @@ export const SubscriptionTabContent: React.FC<SubscriptionTabContentProps> =
     }) => {
       const tokens = useAppDesignTokens();
 
-      const yearlyPkg = packages.find((p) =>
-        p.product.subscriptionPeriod?.includes("Y"),
-      );
-      const monthlyPkg = packages.find((p) =>
-        p.product.subscriptionPeriod?.includes("M"),
+      const sortedPackages = useMemo(() => sortPackages(packages), [packages]);
+
+      const firstYearlyIndex = useMemo(
+        () => sortedPackages.findIndex(isYearlyPackage),
+        [sortedPackages],
       );
 
       return (
@@ -50,27 +65,18 @@ export const SubscriptionTabContent: React.FC<SubscriptionTabContentProps> =
             showsVerticalScrollIndicator={false}
           >
             <View style={styles.plansContainer}>
-              {yearlyPkg && (
+              {sortedPackages.map((pkg, index) => (
                 <SubscriptionPlanCard
-                  package={yearlyPkg}
+                  key={pkg.product.identifier}
+                  package={pkg}
                   isSelected={
                     selectedPackage?.product.identifier ===
-                    yearlyPkg.product.identifier
+                    pkg.product.identifier
                   }
-                  onSelect={() => onSelectPackage(yearlyPkg)}
-                  isBestValue
+                  onSelect={() => onSelectPackage(pkg)}
+                  isBestValue={index === firstYearlyIndex}
                 />
-              )}
-              {monthlyPkg && (
-                <SubscriptionPlanCard
-                  package={monthlyPkg}
-                  isSelected={
-                    selectedPackage?.product.identifier ===
-                    monthlyPkg.product.identifier
-                  }
-                  onSelect={() => onSelectPackage(monthlyPkg)}
-                />
-              )}
+              ))}
             </View>
 
             {features.length > 0 && (

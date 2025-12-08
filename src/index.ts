@@ -1,11 +1,12 @@
 /**
  * @umituz/react-native-paywall - Public API
  *
- * Paywall components for React Native apps with credits and subscription support
+ * Paywall UI components for React Native apps
+ * Business logic should be implemented in your app's domain layer
  */
 
 // =============================================================================
-// DOMAIN LAYER - Entities
+// DOMAIN LAYER - Types
 // =============================================================================
 
 export type { CreditsPackage } from "./domain/entities/CreditsPackage";
@@ -32,22 +33,6 @@ export { PaywallLegalFooter } from "./presentation/components/PaywallLegalFooter
 // =============================================================================
 
 export { PaywallScreen } from "./presentation/screens/PaywallScreen";
-
-// =============================================================================
-// PRESENTATION LAYER - Hooks
-// =============================================================================
-
-export {
-  useCreditsPaywall,
-  type UseCreditsPaywallParams,
-  type UseCreditsPaywallReturn,
-} from "./presentation/hooks/useCreditsPaywall";
-
-export {
-  useCreditsPaywallModal,
-  type UseCreditsPaywallModalParams,
-  type UseCreditsPaywallModalReturn,
-} from "./presentation/hooks/useCreditsPaywallModal";
 
 // =============================================================================
 // TYPES (from peer dependencies)

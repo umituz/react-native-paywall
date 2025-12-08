@@ -58,7 +58,7 @@ export const CreditsPackageCard: React.FC<CreditsPackageCardProps> =
             >
               {totalCredits.toLocaleString()} Credits
             </AtomicText>
-            {pkg.bonus && pkg.bonus > 0 && (
+            {(pkg.bonus ?? 0) > 0 && (
               <AtomicText
                 type="bodySmall"
                 style={[styles.bonus, { color: tokens.colors.success }]}

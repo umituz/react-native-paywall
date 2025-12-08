@@ -18,16 +18,33 @@ interface SubscriptionPlanCardProps {
   isBestValue?: boolean;
 }
 
+const getPeriodLabel = (period: string | null | undefined): string => {
+  if (!period) return "";
+  if (period.includes("Y") || period.includes("year")) return "yearly";
+  if (period.includes("M") || period.includes("month")) return "monthly";
+  if (period.includes("W") || period.includes("week")) return "weekly";
+  if (period.includes("D") || period.includes("day")) return "daily";
+  return "";
+};
+
+const isYearlyPeriod = (period: string | null | undefined): boolean => {
+  return period?.includes("Y") || period?.includes("year") || false;
+};
+
 export const SubscriptionPlanCard: React.FC<SubscriptionPlanCardProps> =
   React.memo(({ package: pkg, isSelected, onSelect, isBestValue = false }) => {
     const tokens = useAppDesignTokens();
     const { t } = useLocalization();
 
-    const isYearly = pkg.product.subscriptionPeriod?.includes("Y");
+    const period = pkg.product.subscriptionPeriod;
+    const isYearly = isYearlyPeriod(period);
+    const periodLabel = getPeriodLabel(period);
     const price = formatPrice(pkg.product.price, pkg.product.currencyCode);
     const monthlyEquivalent = isYearly
       ? formatPrice(pkg.product.price / 12, pkg.product.currencyCode)
       : null;
+
+    const title = pkg.product.title || t(`paywall.${periodLabel}`, periodLabel);
 
     return (
       <TouchableOpacity
@@ -85,16 +102,14 @@ export const SubscriptionPlanCard: React.FC<SubscriptionPlanCardProps> =
                 type="titleMedium"
                 style={[styles.title, { color: tokens.colors.textPrimary }]}
               >
-                {isYearly
-                  ? t("paywall.yearly", "Yearly")
-                  : t("paywall.monthly", "Monthly")}
+                {title}
               </AtomicText>
               {isYearly && (
                 <AtomicText
                   type="bodySmall"
                   style={{ color: tokens.colors.textSecondary }}
                 >
-                  12 mo • {price}
+                  {price}
                 </AtomicText>
               )}
             </View>
