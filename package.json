@@ -1,6 +1,6 @@
 {
   "name": "@umituz/react-native-paywall",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "Paywall UI components for React Native apps - UI only, no business logic",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
