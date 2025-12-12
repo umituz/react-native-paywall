@@ -3,13 +3,14 @@
  * Full screen paywall with Credits and Subscription tabs
  */
 
-import React, { useState, useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { PurchasesPackage } from "react-native-purchases";
 import { useAppDesignTokens } from "@umituz/react-native-design-system-theme";
 import { useLocalization } from "@umituz/react-native-localization";
+import { usePaywall } from "../hooks/usePaywall";
 import { PaywallHeader } from "../components/PaywallHeader";
 import { PaywallTabBar } from "../components/PaywallTabBar";
 import { CreditsTabContent } from "../components/CreditsTabContent";
@@ -48,29 +49,36 @@ export const PaywallScreen: React.FC<PaywallScreenProps> = ({
   const { t } = useLocalization();
   const navigation = useNavigation();
 
-  const [activeTab, setActiveTab] = useState<PaywallTabType>(initialTab);
-  const [selectedCreditsPackageId, setSelectedCreditsPackageId] = useState<
-    string | null
-  >(null);
-  const [selectedSubscriptionPkg, setSelectedSubscriptionPkg] =
-    useState<PurchasesPackage | null>(null);
+  const {
+    activeTab,
+    selectedCreditsPackageId,
+    selectedSubscriptionPkg,
+    handleTabChange,
+    handleCreditsPackageSelect,
+    handleSubscriptionPackageSelect,
+    handleCreditsPurchase,
+    handleSubscriptionPurchase,
+  } = usePaywall({
+    initialTab,
+    onCreditsPurchase,
+    onSubscriptionPurchase,
+  });
 
   const displayTitle = title || t("paywall.title", "Get Premium");
   const displaySubtitle = subtitle || t("paywall.subtitle", "");
 
+  useEffect(() => {
+    if (__DEV__) {
+      console.log("[PaywallScreen] Mounted with initialTab:", initialTab);
+    }
+  }, [initialTab]);
+
   const handleClose = useCallback(() => {
+    if (__DEV__) {
+      console.log("[PaywallScreen] Close button pressed");
+    }
     navigation.goBack();
   }, [navigation]);
-
-  const handleCreditsPurchase = useCallback(async () => {
-    if (!selectedCreditsPackageId || !onCreditsPurchase) return;
-    await onCreditsPurchase(selectedCreditsPackageId);
-  }, [selectedCreditsPackageId, onCreditsPurchase]);
-
-  const handleSubscriptionPurchase = useCallback(async () => {
-    if (!selectedSubscriptionPkg || !onSubscriptionPurchase) return;
-    await onSubscriptionPurchase(selectedSubscriptionPkg);
-  }, [selectedSubscriptionPkg, onSubscriptionPurchase]);
 
   return (
     <View
@@ -85,7 +93,7 @@ export const PaywallScreen: React.FC<PaywallScreenProps> = ({
 
         <PaywallTabBar
           activeTab={activeTab}
-          onTabChange={setActiveTab}
+          onTabChange={handleTabChange}
           creditsLabel={t("paywall.tabs.credits", "Credits")}
           subscriptionLabel={t("paywall.tabs.subscription", "Subscription")}
         />
@@ -94,7 +102,7 @@ export const PaywallScreen: React.FC<PaywallScreenProps> = ({
           <CreditsTabContent
             packages={creditsPackages}
             selectedPackageId={selectedCreditsPackageId}
-            onSelectPackage={setSelectedCreditsPackageId}
+            onSelectPackage={handleCreditsPackageSelect}
             onPurchase={handleCreditsPurchase}
             currentCredits={currentCredits}
             requiredCredits={requiredCredits}
@@ -105,7 +113,7 @@ export const PaywallScreen: React.FC<PaywallScreenProps> = ({
           <SubscriptionTabContent
             packages={subscriptionPackages}
             selectedPackage={selectedSubscriptionPkg}
-            onSelectPackage={setSelectedSubscriptionPkg}
+            onSelectPackage={handleSubscriptionPackageSelect}
             onPurchase={handleSubscriptionPurchase}
             features={subscriptionFeatures}
             isLoading={isLoading}

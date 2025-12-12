@@ -3,12 +3,13 @@
  * Single Responsibility: Display paywall with Credits and Subscription tabs
  */
 
-import React, { useState, useCallback } from "react";
+import React, { useEffect } from "react";
 import { View, Modal, StyleSheet, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAppDesignTokens } from "@umituz/react-native-design-system-theme";
 import { useLocalization } from "@umituz/react-native-localization";
 import type { PurchasesPackage } from "react-native-purchases";
+import { usePaywall } from "../hooks/usePaywall";
 import { PaywallHeader } from "./PaywallHeader";
 import { PaywallTabBar } from "./PaywallTabBar";
 import { CreditsTabContent } from "./CreditsTabContent";
@@ -51,25 +52,29 @@ export const PaywallModal: React.FC<PaywallModalProps> = React.memo(
     const tokens = useAppDesignTokens();
     const { t } = useLocalization();
 
-    const [activeTab, setActiveTab] = useState<PaywallTabType>(initialTab);
-    const [selectedCreditsPackageId, setSelectedCreditsPackageId] = useState<
-      string | null
-    >(null);
-    const [selectedSubscriptionPkg, setSelectedSubscriptionPkg] =
-      useState<PurchasesPackage | null>(null);
+    const {
+      activeTab,
+      selectedCreditsPackageId,
+      selectedSubscriptionPkg,
+      handleTabChange,
+      handleCreditsPackageSelect,
+      handleSubscriptionPackageSelect,
+      handleCreditsPurchase,
+      handleSubscriptionPurchase,
+    } = usePaywall({
+      initialTab,
+      onCreditsPurchase,
+      onSubscriptionPurchase,
+    });
 
     const displayTitle = title || t("paywall.title", "Get Premium");
     const displaySubtitle = subtitle || t("paywall.subtitle", "");
 
-    const handleCreditsPurchase = useCallback(async () => {
-      if (!selectedCreditsPackageId) return;
-      await onCreditsPurchase(selectedCreditsPackageId);
-    }, [selectedCreditsPackageId, onCreditsPurchase]);
-
-    const handleSubscriptionPurchase = useCallback(async () => {
-      if (!selectedSubscriptionPkg) return;
-      await onSubscriptionPurchase(selectedSubscriptionPkg);
-    }, [selectedSubscriptionPkg, onSubscriptionPurchase]);
+    useEffect(() => {
+      if (__DEV__) {
+        console.log("[PaywallModal] Visibility changed:", visible);
+      }
+    }, [visible]);
 
     if (!visible) return null;
 
@@ -96,18 +101,18 @@ export const PaywallModal: React.FC<PaywallModalProps> = React.memo(
                 onClose={onClose}
               />
 
-              <PaywallTabBar
-                activeTab={activeTab}
-                onTabChange={setActiveTab}
-                creditsLabel={t("paywall.tabs.credits", "Credits")}
-                subscriptionLabel={t("paywall.tabs.subscription", "Subscription")}
-              />
+<PaywallTabBar
+            activeTab={activeTab}
+            onTabChange={handleTabChange}
+            creditsLabel={t("paywall.tabs.credits", "Credits")}
+            subscriptionLabel={t("paywall.tabs.subscription", "Subscription")}
+          />
 
               {activeTab === "credits" ? (
                 <CreditsTabContent
                   packages={creditsPackages}
                   selectedPackageId={selectedCreditsPackageId}
-                  onSelectPackage={setSelectedCreditsPackageId}
+                  onSelectPackage={handleCreditsPackageSelect}
                   onPurchase={handleCreditsPurchase}
                   currentCredits={currentCredits}
                   requiredCredits={requiredCredits}
@@ -118,7 +123,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = React.memo(
                 <SubscriptionTabContent
                   packages={subscriptionPackages}
                   selectedPackage={selectedSubscriptionPkg}
-                  onSelectPackage={setSelectedSubscriptionPkg}
+                  onSelectPackage={handleSubscriptionPackageSelect}
                   onPurchase={handleSubscriptionPurchase}
                   features={subscriptionFeatures}
                   isLoading={isLoading}

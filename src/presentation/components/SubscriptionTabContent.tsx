@@ -7,6 +7,7 @@ import React, { useMemo } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
 import { AtomicButton } from "@umituz/react-native-design-system-atoms";
 import { useAppDesignTokens } from "@umituz/react-native-design-system-theme";
+import { useLocalization } from "@umituz/react-native-localization";
 import type { PurchasesPackage } from "react-native-purchases";
 import { SubscriptionPlanCard } from "./SubscriptionPlanCard";
 import { PaywallFeaturesList } from "./PaywallFeaturesList";
@@ -20,6 +21,7 @@ interface SubscriptionTabContentProps {
   features?: Array<{ icon: string; text: string }>;
   isLoading?: boolean;
   purchaseButtonText?: string;
+  processingText?: string;
 }
 
 const isYearlyPackage = (pkg: PurchasesPackage): boolean => {
@@ -46,9 +48,16 @@ export const SubscriptionTabContent: React.FC<SubscriptionTabContentProps> =
       onPurchase,
       features = [],
       isLoading = false,
-      purchaseButtonText = "Subscribe",
+      purchaseButtonText,
+      processingText,
     }) => {
       const tokens = useAppDesignTokens();
+      const { t } = useLocalization();
+
+      const displayPurchaseButtonText = purchaseButtonText || 
+        t("paywall.subscribe", "Subscribe");
+      const displayProcessingText = processingText || 
+        t("paywall.processing", "Processing...");
 
       const sortedPackages = useMemo(() => sortPackages(packages), [packages]);
 
@@ -93,7 +102,7 @@ export const SubscriptionTabContent: React.FC<SubscriptionTabContentProps> =
 
           <View style={styles.footer}>
             <AtomicButton
-              title={isLoading ? "Processing..." : purchaseButtonText}
+              title={isLoading ? displayProcessingText : displayPurchaseButtonText}
               onPress={onPurchase}
               disabled={!selectedPackage || isLoading}
             />

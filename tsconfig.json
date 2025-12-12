@@ -12,10 +12,11 @@
     "baseUrl": "./",
 
     /* Emit */
-    "declaration": false,
-    "declarationMap": false,
-    "sourceMap": false,
-    "noEmit": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "noEmit": false,
+    "outDir": "./lib",
     "removeComments": false,
 
     /* Interop Constraints */
@@ -25,17 +26,17 @@
     "isolatedModules": true,
 
     /* Type Checking */
-    "strict": false,
+    "strict": true,
     "strictNullChecks": true,
     "strictFunctionTypes": true,
     "strictBindCallApply": true,
     "noImplicitThis": true,
-    "noImplicitAny": false,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "noImplicitReturns": false,
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedIndexedAccess": false,
+    "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
 
     /* Completeness */

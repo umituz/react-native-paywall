@@ -7,6 +7,7 @@ import React from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
 import { AtomicText, AtomicButton } from "@umituz/react-native-design-system-atoms";
 import { useAppDesignTokens } from "@umituz/react-native-design-system-theme";
+import { useLocalization } from "@umituz/react-native-localization";
 import { CreditsPackageCard } from "./CreditsPackageCard";
 import { PaywallLegalFooter } from "./PaywallLegalFooter";
 import type { CreditsPackage } from "../../domain/entities/CreditsPackage";
@@ -20,6 +21,8 @@ interface CreditsTabContentProps {
   requiredCredits?: number;
   isLoading?: boolean;
   purchaseButtonText?: string;
+  creditsInfoText?: string;
+  processingText?: string;
 }
 
 export const CreditsTabContent: React.FC<CreditsTabContentProps> = React.memo(
@@ -31,11 +34,21 @@ export const CreditsTabContent: React.FC<CreditsTabContentProps> = React.memo(
     currentCredits,
     requiredCredits,
     isLoading = false,
-    purchaseButtonText = "Purchase",
+    purchaseButtonText,
+    creditsInfoText,
+    processingText,
   }) => {
     const tokens = useAppDesignTokens();
+    const { t } = useLocalization();
 
     const needsCredits = requiredCredits && requiredCredits > currentCredits;
+    
+    const displayPurchaseButtonText = purchaseButtonText || 
+      t("paywall.purchase", "Purchase");
+    const displayProcessingText = processingText || 
+      t("paywall.processing", "Processing...");
+    const displayCreditsInfoText = creditsInfoText || 
+      t("paywall.creditsInfo", "You need {required} credits. You have {current}.");
 
     return (
       <View style={styles.container}>
@@ -50,7 +63,9 @@ export const CreditsTabContent: React.FC<CreditsTabContentProps> = React.memo(
               type="bodyMedium"
               style={{ color: tokens.colors.textSecondary }}
             >
-              You need {requiredCredits} credits. You have {currentCredits}.
+              {displayCreditsInfoText
+                .replace("{required}", String(requiredCredits))
+                .replace("{current}", String(currentCredits))}
             </AtomicText>
           </View>
         )}
@@ -74,7 +89,7 @@ export const CreditsTabContent: React.FC<CreditsTabContentProps> = React.memo(
 
         <View style={styles.footer}>
           <AtomicButton
-            title={isLoading ? "Processing..." : purchaseButtonText}
+            title={isLoading ? displayProcessingText : displayPurchaseButtonText}
             onPress={onPurchase}
             disabled={!selectedPackageId || isLoading}
           />
